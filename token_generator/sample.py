@@ -31,10 +31,11 @@ def process_left_padding(caption_embs, emb_masks):
 
 def main(args):
     # setup pytorch
-    torch.manual_seed(args.seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    torch.set_grad_enabled(False)
+    if args.seed != -1:
+        torch.manual_seed(args.seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        torch.set_grad_enabled(False)
     device = 'cuda:1'
 
     # load vq model
@@ -145,7 +146,7 @@ if __name__ == "__main__":
     parser.add_argument("--image-size", type=int, choices=[256, 384, 512], default=512)
     parser.add_argument("--downsample-size", type=int, choices=[8, 16], default=16)
     parser.add_argument("--cfg-scale", type=float, default=7.5)
-    parser.add_argument("--seed", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=-1)
     parser.add_argument("--top-k", type=int, default=1000, help="top-k value to sample with")
     parser.add_argument("--temperature", type=float, default=1.0, help="temperature value to sample with")
     parser.add_argument("--top-p", type=float, default=1.0, help="top-p value to sample with")
