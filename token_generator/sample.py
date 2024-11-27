@@ -117,35 +117,35 @@ def main(args):
     pano_samples = vq_model.decode_code(pano_tokens, pano_qzshape)
 
     # save panoramas
-    save_image(pano_samples, f"output.png", nrow=1, normalize=True, value_range=(-1, 1), padding=0)
+    save_image(pano_samples, f"../output.png", nrow=1, normalize=True, value_range=(-1, 1), padding=0)
 
     # if record blocks
     qzshape = [len(cond_tokens), args.codebook_embed_dim, latent_size, latent_size]  # [n,8,32,32]
     for i, block_tokens_i in enumerate(block_tokens):
         block_samples = vq_model.decode_code(block_tokens_i, qzshape)
-        save_image(block_samples, f"output_block{i}.png", nrow=4, normalize=True, value_range=(-1, 1), padding=0)
+        save_image(block_samples, f"../output_block{i}.png", nrow=4, normalize=True, value_range=(-1, 1), padding=0)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--t5-path", type=str, default="/data4/zt/models/google")
+    parser.add_argument("--t5-path", type=str, default="../models/google")
     parser.add_argument("--t5-model-type", type=str, default='flan-t5-xl')
     parser.add_argument("--t5-feature-max-len", type=int, default=120)
     parser.add_argument("--t5-feature-dim", type=int, default=2048)
     parser.add_argument("--no-left-padding", action='store_true', default=False)
     parser.add_argument("--gpt-model", type=str, choices=list(GPT_models.keys()), default="GPT-XL")
-    parser.add_argument("--gpt-ckpt", type=str, default="/data4/zt/models/peizesun/llamagen_t2i/AR/t2i_XL_stage2_512.pt")
+    parser.add_argument("--gpt-ckpt", type=str, default="../models/peizesun/llamagen_t2i/AR/t2i_XL_stage2_512.pt")
     parser.add_argument("--cls-token-num", type=int, default=120, help="max token number of condition input")
     parser.add_argument("--precision", type=str, default='bf16', choices=["none", "fp16", "bf16"])
     parser.add_argument("--compile", action='store_true', default=False)
     parser.add_argument("--vq-model", type=str, choices=list(VQ_models.keys()), default="VQ-16")
-    parser.add_argument("--vq-ckpt", type=str, default="/data4/zt/models/peizesun/llamagen_t2i/VQVAE/vq_ds16_t2i.pt", help="ckpt path for vq model")
+    parser.add_argument("--vq-ckpt", type=str, default="../models/peizesun/llamagen_t2i/VQVAE/vq_ds16_t2i.pt", help="ckpt path for vq model")
     parser.add_argument("--codebook-size", type=int, default=16384, help="codebook size for vector quantization")
     parser.add_argument("--codebook-embed-dim", type=int, default=8, help="codebook dimension for vector quantization")
     parser.add_argument("--image-size", type=int, choices=[256, 384, 512], default=512)
     parser.add_argument("--downsample-size", type=int, choices=[8, 16], default=16)
     parser.add_argument("--cfg-scale", type=float, default=7.5)
-    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--seed", type=int, default=2)
     parser.add_argument("--top-k", type=int, default=1000, help="top-k value to sample with")
     parser.add_argument("--temperature", type=float, default=1.0, help="temperature value to sample with")
     parser.add_argument("--top-p", type=float, default=1.0, help="top-p value to sample with")
