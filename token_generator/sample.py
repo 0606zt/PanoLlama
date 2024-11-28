@@ -10,8 +10,8 @@ import os
 import argparse
 from image_tokenizer.vq_model import VQ_models
 from text_encoder.t5 import T5Embedder
-from gpt import GPT_models
-from generate import generate
+from token_generator.gpt import GPT_models
+from token_generator.generate import generate
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -35,7 +35,7 @@ def main(args):
         torch.manual_seed(args.seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
-        torch.set_grad_enabled(False)
+    torch.set_grad_enabled(False)
     device = 'cuda:1'
 
     # load vq model
@@ -118,29 +118,29 @@ def main(args):
     pano_samples = vq_model.decode_code(pano_tokens, pano_qzshape)
 
     # save panoramas
-    save_image(pano_samples, f"../output.png", nrow=1, normalize=True, value_range=(-1, 1), padding=0)
+    save_image(pano_samples, f"output.png", nrow=1, normalize=True, value_range=(-1, 1), padding=0)
 
     # if record blocks
     qzshape = [len(cond_tokens), args.codebook_embed_dim, latent_size, latent_size]  # [n,8,32,32]
     for i, block_tokens_i in enumerate(block_tokens):
         block_samples = vq_model.decode_code(block_tokens_i, qzshape)
-        save_image(block_samples, f"../output_block{i}.png", nrow=4, normalize=True, value_range=(-1, 1), padding=0)
+        save_image(block_samples, f"output_block{i}.png", nrow=4, normalize=True, value_range=(-1, 1), padding=0)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--t5-path", type=str, default="../text_encoder/models")
+    parser.add_argument("--t5-path", type=str, default="text_encoder/models")
     parser.add_argument("--t5-model-type", type=str, default='flan-t5-xl')
     parser.add_argument("--t5-feature-max-len", type=int, default=120)
     parser.add_argument("--t5-feature-dim", type=int, default=2048)
     parser.add_argument("--no-left-padding", action='store_true', default=False)
     parser.add_argument("--gpt-model", type=str, choices=list(GPT_models.keys()), default="GPT-XL")
-    parser.add_argument("--gpt-ckpt", type=str, default="./models/t2i_XL_stage2_512.pt")
+    parser.add_argument("--gpt-ckpt", type=str, default="token_generator/models/t2i_XL_stage2_512.pt")
     parser.add_argument("--cls-token-num", type=int, default=120, help="max token number of condition input")
     parser.add_argument("--precision", type=str, default='bf16', choices=["none", "fp16", "bf16"])
     parser.add_argument("--compile", action='store_true', default=False)
     parser.add_argument("--vq-model", type=str, choices=list(VQ_models.keys()), default="VQ-16")
-    parser.add_argument("--vq-ckpt", type=str, default="../image_tokenizer/models/vq_ds16_t2i.pt", help="ckpt path for vq model")
+    parser.add_argument("--vq-ckpt", type=str, default="image_tokenizer/models/vq_ds16_t2i.pt", help="ckpt path for vq model")
     parser.add_argument("--codebook-size", type=int, default=16384, help="codebook size for vector quantization")
     parser.add_argument("--codebook-embed-dim", type=int, default=8, help="codebook dimension for vector quantization")
     parser.add_argument("--image-size", type=int, choices=[256, 384, 512], default=512)
