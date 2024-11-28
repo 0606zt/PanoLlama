@@ -47,9 +47,9 @@ If you find our work helpful, please consider citing:
 
 ```bibtex
 @article{zhou2024panollama,
-    title = {PanoLlama: Generating Endless and Coherent Panoramas with Next-Token-Prediction LLMs},
-    author = {Zhou, Teng and Zhang, Xiaoyu and Tang, Yongchuan},
-    journal = {arXiv preprint arXiv:2411.15867},
-    year = {2024}
+  title={PanoLlama: Generating Endless and Coherent Panoramas with Next-Token-Prediction LLMs},
+  author={Zhou, Teng and Zhang, Xiaoyu and Tang, Yongchuan},
+  journal={arXiv preprint arXiv:2411.15867},
+  year={2024}
 }
 ```
