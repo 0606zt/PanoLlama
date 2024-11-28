@@ -1,8 +1,8 @@
 # 🦙PanoLlama: Generating Endless and Coherent Panoramas with Next-Token-Prediction LLMs
 
-## Introduction
-
 ![intro](docs/intro.png)
+
+## Introduction
 
 What is **PanoLlama**:
 
