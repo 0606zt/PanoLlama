@@ -3,4 +3,3 @@ ftfy
 transformers
 accelerate
 sentencepiece
-
