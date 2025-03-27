@@ -167,6 +167,7 @@ def generate(
 
     batch_size = cond.shape[0]
     device = cond.device
+    latent_size = int(num_tokens ** 0.5)
 
     # generate first token block
     if cfg_scale > 1.0:
@@ -204,7 +205,7 @@ def generate(
     seqs = [seq[:, T:]]
     if gen_mode == 'v':
         pano_seq = seqs[-1]
-        addit_num_tokens = addit_rows * 32
+        addit_num_tokens = addit_rows * latent_size
         for t in range(times):
             addit_seq = generate_additional_tokens_vertical(model, num_tokens, cfg_scale, cfg_interval, sampling_kwargs,
                                                             T, device, generated_tokens=seqs[-1],
@@ -212,26 +213,26 @@ def generate(
             seqs.append(torch.cat([seqs[-1][:, addit_num_tokens:], addit_seq], dim=1))
             pano_seq = torch.cat([pano_seq, addit_seq], dim=1)
     elif gen_mode == 'h':
-        pano_seq = rearrange(seqs[-1], "b (h w) -> b h w", h=32)
+        pano_seq = rearrange(seqs[-1], "b (h w) -> b h w", h=latent_size)
         for t in range(times):
-            addit_seq = generate_additional_tokens_horizontal(model, cfg_scale, sampling_kwargs, T, device,
+            addit_seq = generate_additional_tokens_horizontal(model, cfg_scale, sampling_kwargs, T, latent_size, device,
                                                               generated_tokens=seqs[-1], addit_cols=addit_cols)
             seqs.append(addit_seq)
-            addit_seq = rearrange(addit_seq, "b (h w) -> b h w", h=32)
-            pano_seq = torch.cat([pano_seq, addit_seq[:, :, 32 - addit_cols:]], dim=2)
+            addit_seq = rearrange(addit_seq, "b (h w) -> b h w", h=latent_size)
+            pano_seq = torch.cat([pano_seq, addit_seq[:, :, latent_size - addit_cols:]], dim=2)
     else:
         times_v = times_h = times
         pano_seq = []
-        addit_num_tokens = addit_rows * 32
+        addit_num_tokens = addit_rows * latent_size
         for t_v in range(times_v + 1):
-            pano_seq_h = rearrange(seqs[-1], "b (h w) -> b h w", h=32)
+            pano_seq_h = rearrange(seqs[-1], "b (h w) -> b h w", h=latent_size)
             for t_h in range(times_h):
-                addit_seq = generate_additional_tokens_horizontal(model, cfg_scale, sampling_kwargs, T, device,
+                addit_seq = generate_additional_tokens_horizontal(model, cfg_scale, sampling_kwargs, T, latent_size, device,
                                                                   generated_tokens=seqs[-1], addit_cols=addit_cols)
                 seqs.append(addit_seq)
-                addit_seq = rearrange(addit_seq, "b (h w) -> b h w", h=32)
-                pano_seq_h = torch.cat([pano_seq_h, addit_seq[:, :, 32 - addit_cols:]], dim=2)
-            pano_seq_h = pano_seq_h if t_v == 0 else pano_seq_h[:, 32 - addit_rows:, :]
+                addit_seq = rearrange(addit_seq, "b (h w) -> b h w", h=latent_size)
+                pano_seq_h = torch.cat([pano_seq_h, addit_seq[:, :, latent_size - addit_cols:]], dim=2)
+            pano_seq_h = pano_seq_h if t_v == 0 else pano_seq_h[:, latent_size - addit_rows:, :]
             pano_seq.append(pano_seq_h)
             addit_seq = generate_additional_tokens_vertical(model, num_tokens, cfg_scale, cfg_interval, sampling_kwargs,
                                                             T, device, generated_tokens=seqs[t_v * (times_h + 1)],
@@ -256,15 +257,15 @@ def generate_additional_tokens_vertical(
 
 def generate_additional_tokens_horizontal(
         model,
-        cfg_scale, sampling_kwargs, T, device,
+        cfg_scale, sampling_kwargs, T, latent_size, device,
         generated_tokens: torch.Tensor, addit_cols: int
 ):
-    generated_tokens = rearrange(generated_tokens, "b (h w) -> b h w", h=32)
+    generated_tokens = rearrange(generated_tokens, "b (h w) -> b h w", h=latent_size)
     updated_tokens = torch.randint(0, 1, generated_tokens.shape, device=device) - 1
-    updated_tokens[:, :, :32 - addit_cols] = generated_tokens[:, :, addit_cols:]
-    updated_tokens = rearrange(updated_tokens, "b h w -> b (h w)", h=32)
+    updated_tokens[:, :, :latent_size - addit_cols] = generated_tokens[:, :, addit_cols:]
+    updated_tokens = rearrange(updated_tokens, "b h w -> b (h w)", h=latent_size)
     cur_token = updated_tokens[:, 31 - addit_cols].unsqueeze(1)  # the last token of each row of generated tokens
-    for i in range(32 - addit_cols, 1024):
+    for i in range(latent_size - addit_cols, 1024):
         input_pos = torch.tensor([T + i - 1], device=device, dtype=torch.int)
         next_token, _ = decode_one_token(model, cur_token, input_pos, cfg_scale, True, **sampling_kwargs)
         if torch.all(updated_tokens[:, i] == -1):
