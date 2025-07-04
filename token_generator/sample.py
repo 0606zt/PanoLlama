@@ -71,10 +71,9 @@ def main(args):
     gpt_model.eval()
     del checkpoint
 
-    # compile gpt model if needed
+    # compile gpt model if needed (requires PyTorch 2.0)
     if args.compile:
         print("Compiling gpt model...")
-        # requires PyTorch 2.0 (optional)
         gpt_model = torch.compile(
             gpt_model,
             mode='reduce-overhead',
