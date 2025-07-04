@@ -32,11 +32,11 @@ pip install -r requirements.txt
 from [LlamaGen](https://github.com/FoundationVision/LlamaGen), and place them in the folder `/models` under the
 corresponding modules:
 
-|     module      |    model    | params | tokens |                                                 weight                                                 |
-|:---------------:|:-----------:|:------:|:------:|:------------------------------------------------------------------------------------------------------:|
-|  text encoder   | FLAN-T5-XL  |   3B   |   /    |                    [flan-t5-xl](https://huggingface.co/google/flan-t5-xl/tree/main)                    |
-| image tokenizer |    VQVAE    |  72M   | 16x16  |       [vq_ds16_t2i.pt](https://huggingface.co/peizesun/llamagen_t2i/resolve/main/vq_ds16_t2i.pt)       |
-| token generator | LlamaGen-XL |  775M  | 32x32  | [t2i_XL_stage2_512.pt](https://huggingface.co/peizesun/llamagen_t2i/resolve/main/t2i_XL_stage2_512.pt) |
+|     module      |   model    | params | tokens |                                                 weight                                                 |
+|:---------------:|:----------:|:------:|:------:|:------------------------------------------------------------------------------------------------------:|
+|  text encoder   | FLAN-T5-XL |   3B   |   /    |                    [flan-t5-xl](https://huggingface.co/google/flan-t5-xl/tree/main)                    |
+| image tokenizer |   VQVAE    |  72M   | 16x16  |       [vq_ds16_t2i.pt](https://huggingface.co/peizesun/llamagen_t2i/resolve/main/vq_ds16_t2i.pt)       |
+| token generator |  Llama-XL  |  775M  | 32x32  | [t2i_XL_stage2_512.pt](https://huggingface.co/peizesun/llamagen_t2i/resolve/main/t2i_XL_stage2_512.pt) |
 
 **Generation** &ensp; We support panorama expansion in vertical, horizontal, and both directions. Try the following
 command to generate a horizontal one:
