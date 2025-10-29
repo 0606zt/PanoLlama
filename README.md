@@ -56,10 +56,11 @@ python -m token_generator.sample \
 If you find our work helpful, please consider citing:
 
 ```bibtex
-@article{zhou2024panollama,
-  title={PanoLlama: Generating Endless and Coherent Panoramas with Next-Token-Prediction LLMs},
+@inproceedings{zhou2025panollama,
+  title={Panollama: Generating endless and coherent panoramas with next-token-prediction llms},
   author={Zhou, Teng and Zhang, Xiaoyu and Tang, Yongchuan},
-  journal={arXiv preprint arXiv:2411.15867},
-  year={2024}
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={15340--15349},
+  year={2025}
 }
 ```
