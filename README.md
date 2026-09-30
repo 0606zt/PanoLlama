@@ -22,7 +22,7 @@ For more details, please visit our [paper page](https://arxiv.org/abs/2411.15867
 
 ## Get Started
 
-**Configuration** &ensp; Set up and configure the environment by installing the required packages:
+**Configuration** &ensp; Install the required packages to set up the environment:
 
 ```bash
 pip install -r requirements.txt
